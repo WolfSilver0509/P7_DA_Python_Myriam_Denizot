@@ -1,55 +1,41 @@
 import csv
+import json
 
-# Ouvrir le fichier CSV en mode lecture
-with open('dataset1_Python+P7.csv', 'r') as f:
-    # Créer un objet lecteur CSV
-    reader = csv.reader(f)
+from itertools import combinations 
 
-    # Créer une liste vide pour accueillir les dictionnaires
-    dict_list = []
-    dict_list_v2 = []
-    # Récupérer les en-têtes du fichier CSV
-    headers = next(reader)
+#Récuparation des donnés du CSV
+with open('dataset2_Python+P7.csv') as data:
+  data = [d for d in csv.DictReader(data, delimiter=',') if float(d['price']) > 0 and float(d['profit']) > 0]
 
-    # Boucle sur les lignes du fichier CSV
-    for row in reader:
-        # Créer un dictionnaire en utilisant les en-têtes comme clés et les valeurs de la ligne comme valeurs associées
-        dict_list.append(dict(zip(headers, row)))
+#Filtration par profit 
 
-    # Fermer le fichier
-    # print(dict_list)
-    # print(headers)
-    # f.close()
+data = sorted(data, key=lambda d: float(d['profit']),reverse=True)
 
-    # Condition pour que les prix inférieurs à zero soit supprimer
-    for i in dict_list:
-        if float(i['price']) <= 0 and float(i['profit']) <= 0:
-            dict_list.remove(i)
-            dict_list_v2.append(dict_list)
-            #print(dict_list)
+# Une fois fait une nouvelle data trier par profit 
 
-    # crée une nouvelle entrée dans le dictionnaire pour le profit en euros
-    for i in dict_list:
-        i['profit_total'] = (float(i['price']) * float(i['profit'])) / 100
-        print(dict_list)
+def sumcomb(comb):
+    total_price = 0
+    for element in comb:
+        total_price += float(element["price"])
+    return total_price
 
-    # ranger cette liste de dictionnaire par ordre décroissant de profit_total
-    # dict_list.sort_values(by=['profit_total'], ascending=False)
+def calculer_profit(comb):
+    total_profit = 0
+    for element in comb:
+        total_profit += (float(element['profit']) * float(element['price'])) / 100
+    return total_profit
+  
+combination_list = []
+
+for action in data:
+  partial_sum = sumcomb(combination_list) + float(action['price'])
+  if partial_sum <= 500:
+    combination_list.append(action)
 
 
-    # enregistrer la liste dict dans un fichier csv
+for item in combination_list:
+  print(item['name'])
 
-    data = [dict_list]
 
-    #nom du fichier
-    filename = "newCsv.csv"
-
-    # le clé du dict comme nom de colonne
-    fieldnames = dict_list_v2[0].keys()
-
-    # ecriture dans le fichier csv
-    with open(filename, 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in dict_list_v2:
-            writer.writerow(row)
+print(calculer_profit(combination_list))
+print(sumcomb(combination_list))
