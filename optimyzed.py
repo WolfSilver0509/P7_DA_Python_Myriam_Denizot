@@ -36,6 +36,5 @@ for action in data:
 for item in combination_list:
   print(item['name'])
 
-
-print(calculer_profit(combination_list))
-print(sumcomb(combination_list))
+print(f'Le profit des actions est égal à {calculer_profit(combination_list)} €')
+print(f'Le prix total des actions acheté est égal à {sumcomb(combination_list)} € .')
